@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LU MENG JIN — Portfolio</title>
+
+<!-- ============================================================
+     字型 Fonts — Fraunces（標題用襯線）＋ Sora（內文/介面用無襯線）
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   0. 色票 / DESIGN TOKENS
+   來源：使用者提供的新色票
+   Space Cadet #25344F｜Slate Gray #617891｜Tan #D5B893
+   Coffee #6F4D38｜Caput Mortuum #632024
+
+   下面沿用原本的變數名稱（--seashell、--wheat…）當作「角色別名」，
+   只是把實際顏色換成新色票，這樣其餘 CSS 不用整份改寫也能套用新配色。
+   之後如果只想再微調色彩，改這幾行新色票變數即可。
+   ============================================================ */
+:root{
+  /* 新色票（五色為主）*/
+  --space-cadet:   #25344F;
+  --slate-gray:    #D0E9ED;
+  --tan:           #D5B893;
+  --coffee:        #6F4D38;
+  --caput-mortuum: #632024;
+
+  /* 角色別名：main = 主要文字色 / muted = 次要文字 / accent = 互動強調色 */
+  --seashell:      var(--tan);            /* 主要文字 / 亮面（原角色由 Tan 擔任） */
+  --wheat:         var(--tan);            /* 強調文字（同樣使用 Tan，靠背景襯托做出區隔） */
+  --powder-blue:   var(--slate-gray);     /* 次要文字 / 分隔線 */
+  --french-blue:   var(--caput-mortuum);  /* 主色 — 連結 / 按鈕 / active 狀態 */
+  --midnight:      var(--space-cadet);    /* 背景基底 */
+  --midnight-deep: #161F2F;               /* Space Cadet 的深化版，用於漸層與卡片底 */
+
+  --bg:            var(--midnight);
+  --bg-elevated:   var(--coffee);
+  --text-main:     var(--seashell);
+  --text-muted:    var(--powder-blue);
+  --accent:        var(--french-blue);
+  --accent-soft:   #854E45;               /* Caput Mortuum 與 Tan 混色，hover 用的柔化強調色 */
+  --highlight:     var(--wheat);
+
+  --font-display:  'Fraunces', Georgia, serif;
+  --font-body:     'Sora', -apple-system, sans-serif;
+
+  --max-width:     1240px;
+  --gap:           28px;
+  --radius:        2px;
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html{
+  scroll-behavior:smooth;
+}
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
+
+body{
+  padding-top:var(--header-h, 110px); /* 由 JS 依實際 header 高度動態設定 */
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(99,32,36,0.22), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(111,77,56,0.10), transparent 55%),
+    var(--bg);
+  color:var(--text-main);
+  font-family:var(--font-body);
+  font-weight:400;
+  line-height:1.6;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{ color:inherit; text-decoration:none; }
+button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+img{ display:block; max-width:100%; }
+ul{ list-style:none; }
+
+::selection{ background:var(--accent); color:var(--seashell); }
+
+:focus-visible{
+  outline: 2px solid var(--wheat);
+  outline-offset: 3px;
+}
+
+.wrap{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:0 40px;
+}
+@media (max-width:768px){
+  .wrap{ padding:0 22px; }
+}
+
+/* ============================================================
+   1. HEADER
+   ============================================================ */
+header.site-header{
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:100;
+  background:rgba(22,31,47,0.86);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(97,120,145,0.15);
+  transition:transform .4s var(--ease);
+}
+/* 往下滑動時整條 header 隱藏，只有回到頁面最上方（含點擊 Back to top）才會再出現 */
+header.site-header.header-hidden{
+  transform:translateY(-100%);
+}
+.header-inner{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:22px 40px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+}
+@media (max-width:768px){
+  .header-inner{ padding:18px 22px; }
+}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.brand .name-en{
+  font-family:var(--font-display);
+  font-size:22px;
+  font-weight:500;
+  letter-spacing:0.08em;
+  color:var(--wheat);
+}
+.brand .name-zh{
+  font-size:12px;
+  letter-spacing:0.25em;
+  color:var(--text-muted);
+  font-weight:400;
+}
+.brand .role{
+  font-size:13px;
+  color:var(--text-muted);
+  margin-top:6px;
+  max-width:260px;
+}
+
+nav.nav-desktop{
+  display:flex;
+  gap:36px;
+  padding-top:6px;
+}
+nav.nav-desktop a{
+  font-size:15px;
+  letter-spacing:0.04em;
+  color:var(--text-muted);
+  position:relative;
+  padding-bottom:6px;
+  transition:color .25s var(--ease);
+}
+nav.nav-desktop a:hover{ color:var(--seashell); }
+nav.nav-desktop a::after{
+  content:'';
+  position:absolute;
+  left:0; bottom:0;
+  height:2px;
+  width:0;
+  background:var(--french-blue);
+  transition:width .3s var(--ease);
+}
+nav.nav-desktop a.active{ color:var(--seashell); }
+nav.nav-desktop a.active::after{ width:100%; background:var(--wheat); }
+
+@media (max-width:768px){
+  nav.nav-desktop{ display:none; }
+}
+
+/* 漢堡選單 */
+.hamburger{
+  display:none;
+  flex-direction:column;
+  gap:5px;
+  padding:10px;
+  margin:-10px -10px 0 0;
+}
+.hamburger span{
+  width:24px;
+  height:2px;
+  background:var(--seashell);
+  transition:transform .3s var(--ease), opacity .3s var(--ease);
+}
+.hamburger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; }
+.hamburger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+@media (max-width:768px){
+  .hamburger{ display:flex; }
+}
+
+.mobile-menu{
+  position:fixed;
+  inset:0;
+  top:0;
+  background:var(--midnight-deep);
+  z-index:99;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:36px;
+  transform:translateY(-100%);
+  transition:transform .4s var(--ease);
+  pointer-events:none;
+}
+.mobile-menu.open{
+  transform:translateY(0);
+  pointer-events:auto;
+}
+.mobile-menu a{
+  font-family:var(--font-display);
+  font-size:34px;
+  color:var(--seashell);
+  letter-spacing:0.05em;
+}
+.mobile-menu a.active{ color:var(--wheat); }
+.mobile-menu .mm-sub{
+  font-size:13px;
+  letter-spacing:0.3em;
+  color:var(--text-muted);
+}
+
+/* ============================================================
+   2. VIEW SWITCH（單頁式 SPA：portfolio / project / resume）
+   ============================================================ */
+main{ min-height:70vh; }
+.view{ animation:fadeIn .45s var(--ease); }
+.view[hidden]{ display:none; }
+@keyframes fadeIn{
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* ============================================================
+   3. PORTFOLIO 頁
+   ============================================================ */
+.portfolio-head{
+  padding:64px 0 28px;
+}
+.portfolio-head h1{
+  font-family:var(--font-display);
+  font-weight:400;
+  font-size:clamp(30px, 4vw, 46px);
+  color:var(--seashell);
+  max-width:720px;
+}
+.portfolio-head h1 em{
+  font-style:italic;
+  color:var(--wheat);
+}
+.portfolio-head p{
+  margin-top:14px;
+  max-width:520px;
+  color:var(--text-muted);
+  font-size:15px;
+}
+
+.filter-tabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:6px 0 22px;
+  border-bottom:1px solid rgba(97,120,145,0.18);
+  margin-bottom:36px;
+  scrollbar-width:none;
+}
+.filter-tabs::-webkit-scrollbar{ display:none; }
+.filter-tabs button{
+  flex:0 0 auto;
+  padding:9px 18px;
+  font-size:13px;
+  letter-spacing:0.03em;
+  color:var(--text-muted);
+  border:1px solid rgba(97,120,145,0.3);
+  border-radius:100px;
+  transition:all .25s var(--ease);
+  white-space:nowrap;
+}
+.filter-tabs button:hover{
+  border-color:var(--wheat);
+  color:var(--seashell);
+}
+.filter-tabs button.active{
+  background:var(--french-blue);
+  border-color:var(--french-blue);
+  color:var(--seashell);
+}
+
+/* 作品縮圖：整排滿版寬、一件接一件往下排列（不管這個分類有幾件作品，
+   每一張都是滿版寬，捲動就會看到下一件）。每張圖依原始比例顯示、不裁切。 */
+.project-grid{
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
+  padding-bottom:100px;
+}
+/* All 分類：兩件作品一排（用 CSS Grid，不是 columns，不會有 Safari 的排版 bug） */
+.project-grid.cols-2{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  align-items:start;
+}
+@media (max-width:700px){
+  .project-grid.cols-2{ grid-template-columns:1fr; }
+}
+.project-card{
+  display:block;
+  width:100%;
+  position:relative;
+  overflow:hidden;
+  border-radius:var(--radius);
+  background:var(--bg-elevated);
+  cursor:pointer;
+  border:1px solid rgba(97,120,145,0.12);
+}
+
+.project-card img,
+.project-card video{
+  width:100%;
+  height:auto;
+  display:block;
+  transition:transform .6s var(--ease);
+}
+.project-card:hover img,
+.project-card:hover video{ transform:scale(1.04); }
+
+.project-card .overlay{
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(22,31,47,0.95) 0%, rgba(22,31,47,0.35) 45%, transparent 75%);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:20px;
+  opacity:0;
+  transition:opacity .35s var(--ease);
+}
+.project-card:hover .overlay,
+.project-card:focus-visible .overlay{ opacity:1; }
+
+/* 觸控裝置：資訊常駐顯示，不用 hover */
+@media (hover:none){
+  .project-card .overlay{
+    opacity:1;
+    background:linear-gradient(to top, rgba(22,31,47,0.97) 0%, rgba(22,31,47,0.55) 40%, transparent 80%);
+  }
+}
+
+.project-card .p-title{
+  font-family:var(--font-display);
+  font-size:19px;
+  color:var(--seashell);
+  margin-bottom:6px;
+}
+.project-card .p-meta{
+  font-size:11.5px;
+  letter-spacing:0.03em;
+  color:var(--wheat);
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px 10px;
+}
+.project-card .p-meta span{ color:var(--powder-blue); }
+
+/* ============================================================
+   4. PROJECT DETAIL 頁
+   ============================================================ */
+.project-detail{ padding:52px 0 90px; }
+
+.pd-back{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color:var(--text-muted);
+  margin-bottom:30px;
+  transition:color .25s var(--ease);
+}
+.pd-back:hover{ color:var(--wheat); }
+
+/* 圖片在左、文字說明在右 的內頁版型（參考站的排法）*/
+.pd-top{
+  display:grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap:52px;
+  align-items:start;
+  margin-bottom:56px;
+}
+@media (max-width:900px){
+  .pd-top{ grid-template-columns:1fr; gap:28px; }
+}
+
+.pd-hero{
+  width:100%;
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:var(--bg-elevated);
+}
+/* 不裁切：圖片依原始比例顯示（16:9 的圖就會維持 16:9） */
+.pd-hero img,
+.pd-hero video{ width:100%; height:auto; display:block; }
+
+.pd-info{
+  position:sticky;
+  top:calc(var(--header-h, 110px) + 24px);
+}
+@media (max-width:900px){
+  .pd-info{ position:static; }
+}
+
+.pd-eyebrow{
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin-bottom:14px;
+}
+
+.pd-title{
+  font-family:var(--font-display);
+  font-size:clamp(26px,3vw,38px);
+  font-weight:500;
+  color:var(--seashell);
+  margin-bottom:18px;
+}
+.pd-desc{
+  color:var(--powder-blue);
+  font-size:15px;
+  line-height:1.85;
+  white-space:pre-line;
+  margin-bottom:30px;
+}
+
+.pd-meta{ display:flex; flex-direction:column; gap:22px; }
+.meta-row .meta-label{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--powder-blue);
+  margin-bottom:10px;
+}
+.meta-row .year{
+  font-family:var(--font-display);
+  font-size:26px;
+  color:var(--wheat);
+}
+.tag-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.tag{
+  font-size:12.5px;
+  padding:6px 13px;
+  border-radius:100px;
+  border:1px solid rgba(97,120,145,0.3);
+  color:var(--seashell);
+}
+.tag.soft{ background:rgba(111,77,56,0.22); border-color:rgba(111,77,56,0.55); color:var(--wheat); }
+
+/* 更多照片：跟首頁縮圖一樣採用 masonry，維持每張圖原本的比例，不裁切 */
+.pd-gallery{
+  margin-top:56px;
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:18px;
+  align-items:start;
+}
+@media (max-width:700px){
+  .pd-gallery{ grid-template-columns:1fr; }
+}
+.pd-gallery > div{
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.pd-gallery img,
+.pd-gallery video{
+  width:100%; height:auto; display:block;
+}
+.pd-gallery .full{ grid-column:1 / -1; }
+
+.pd-video{
+  margin-top:56px;
+}
+.video-frame{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:#000;
+}
+.video-frame iframe{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  border:0;
+}
+
+.pd-next{
+  margin-top:80px;
+  padding-top:36px;
+  border-top:1px solid rgba(97,120,145,0.18);
+}
+.pd-next .next-label{
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+.next-card{
+  position:relative;
+  display:block;
+  aspect-ratio:16/6;
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.next-card img,
+.next-card video{
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .6s var(--ease), filter .4s var(--ease);
+  filter:brightness(0.55);
+}
+.next-card:hover img,
+.next-card:hover video{ transform:scale(1.05); filter:brightness(0.4); }
+.next-card .nc-inner{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:flex-start; justify-content:center;
+  padding:36px;
+}
+.next-card .nc-title{
+  font-family:var(--font-display);
+  font-size:clamp(24px,3.2vw,36px);
+  color:var(--seashell);
+}
+@media (max-width:700px){
+  .next-card{ aspect-ratio:4/3; }
+}
+
+/* ============================================================
+   5. RESUME 頁
+   ============================================================ */
+.resume{ padding:64px 0 100px; }
+.resume-top{
+  display:flex;
+  gap:48px;
+  align-items:flex-start;
+  margin-bottom:64px;
+  flex-wrap:wrap;
+}
+.avatar{
+  width:168px; height:168px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid var(--wheat);
+  flex:0 0 auto;
+  background:var(--bg-elevated);
+}
+.avatar img{ width:100%; height:100%; object-fit:cover; }
+
+.resume-intro h1{
+  font-family:var(--font-display);
+  font-size:clamp(30px,4vw,44px);
+  color:var(--seashell);
+  margin-bottom:6px;
+}
+.resume-intro .r-role{
+  color:var(--wheat);
+  font-size:15px;
+  letter-spacing:0.03em;
+  margin-bottom:6px;
+}
+.resume-intro .r-loc{
+  color:var(--text-muted);
+  font-size:13.5px;
+  margin-bottom:18px;
+}
+.social-row{ display:flex; gap:14px; }
+.social-row a{
+  width:40px; height:40px;
+  border:1px solid rgba(97,120,145,0.35);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .25s var(--ease);
+}
+.social-row a:hover{
+  border-color:var(--wheat);
+  background:rgba(111,77,56,0.22);
+  transform:translateY(-2px);
+}
+.social-row svg{ width:18px; height:18px; stroke:var(--seashell); fill:none; }
+
+.resume-section{
+  max-width:760px;
+  margin-bottom:56px;
+}
+.resume-section h2{
+  font-family:var(--font-display);
+  font-size:24px;
+  color:var(--seashell);
+  margin-bottom:18px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(97,120,145,0.2);
+}
+.resume-section p{
+  color:var(--powder-blue);
+  font-size:15.5px;
+  line-height:1.9;
+  margin-bottom:16px;
+}
+
+.skills-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.skill-pill{
+  font-size:13.5px;
+  padding:9px 18px;
+  border:1px solid rgba(97,120,145,0.3);
+  border-radius:100px;
+  color:var(--seashell);
+  transition:all .25s var(--ease);
+}
+.skill-pill:hover{
+  border-color:var(--french-blue);
+  background:rgba(99,32,36,0.32);
+}
+
+/* ============================================================
+   6. FOOTER / BACK TO TOP
+   ============================================================ */
+footer.site-footer{
+  border-top:1px solid rgba(97,120,145,0.15);
+  padding:26px 0;
+}
+.footer-inner{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:0 40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  font-size:12.5px;
+  color:var(--text-muted);
+}
+@media (max-width:768px){ .footer-inner{ padding:0 22px; } }
+
+.back-to-top{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  letter-spacing:0.12em;
+  color:var(--wheat);
+  font-size:12px;
+  text-transform:uppercase;
+  transition:color .25s var(--ease), transform .25s var(--ease);
+}
+.back-to-top:hover{ color:var(--seashell); transform:translateY(-2px); }
+.back-to-top svg{ width:13px; height:13px; stroke:currentColor; fill:none; }
+
+/* 右下角浮動回頂端按鈕（滑動一段距離後出現）*/
+.float-top{
+  position:fixed;
+  right:24px; bottom:24px;
+  width:46px; height:46px;
+  border-radius:50%;
+  background:var(--french-blue);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transform:translateY(12px);
+  transition:opacity .3s var(--ease), transform .3s var(--ease);
+  z-index:90;
+  box-shadow:0 8px 24px rgba(0,0,0,0.35);
+}
+.float-top.show{ opacity:1; pointer-events:auto; transform:translateY(0); }
+.float-top svg{ width:18px; height:18px; stroke:var(--seashell); fill:none; }
+.float-top:hover{ background:var(--accent-soft); }
+
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#/portfolio" class="brand" data-nav>
+      <span class="name-en">LU MENG JIN</span>
+      <span class="name-zh">呂 孟 瑾</span>
+      <span class="role" id="brandRole">3D Environment Artist</span>
+    </a>
+
+    <nav class="nav-desktop" id="navDesktop">
+      <a href="#/portfolio" data-view-link="portfolio">Portfolio</a>
+      <a href="#/resume" data-view-link="resume">Resume</a>
+    </nav>
+
+    <button class="hamburger" id="hamburgerBtn" aria-label="開啟選單" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= MOBILE MENU ================= -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#/portfolio" data-view-link="portfolio">Portfolio</a>
+  <a href="#/resume" data-view-link="resume">Resume</a>
+  <span class="mm-sub">LU MENG JIN — 呂孟瑾</span>
+</div>
+
+<main>
+
+  <!-- ================= PORTFOLIO ================= -->
+  <section id="view-portfolio" class="view">
+    <div class="wrap">
+      <div class="portfolio-head">
+        <h1>Selected <em>work</em> across real-time engines, 3D environments, and interactive experiences.</h1>
+        <p id="portfolioSub">以 3D 與即時媒體為核心，創作遊戲、VR、動畫與互動體驗。</p>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs"></div>
+      <div class="project-grid" id="projectGrid"></div>
+    </div>
+  </section>
+
+  <!-- ================= PROJECT DETAIL ================= -->
+  <section id="view-project" class="view" hidden>
+    <div class="wrap project-detail" id="projectDetail"></div>
+  </section>
+
+  <!-- ================= RESUME ================= -->
+  <section id="view-resume" class="view" hidden>
+    <div class="wrap resume" id="resumeContent"></div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span id="footerName">© LU MENG JIN — All rights reserved</span>
+    <a href="#top" class="back-to-top" id="backToTopLink">
+      Back to top
+      <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</footer>
+
+<!-- 右下角浮動回頂端 -->
+<button class="float-top" id="floatTop" aria-label="回到頂端">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script>
+/* =====================================================================
+   ============  CONFIG 區：你的所有內容都在這裡修改  ===================
+   =====================================================================
+   - 想換照片：把 cover / gallery 的路徑換成你自己的圖片檔案路徑
+     （例如 "images/project1.jpg"），並把圖片放在網站同一資料夾下的
+     images 資料夾裡。若路徑找不到圖片，畫面會自動顯示一張暫用色塊，
+     所以就算還沒放圖片，網站也不會壞掉。
+   - 想換文字：直接改字串內容即可。
+   - categories 目前使用：3D Game / Interactive Installation /
+     3D Environment/Character / Audio Visual / Real Time Motion Graphic
+     （順序就是 CATEGORIES 陣列的順序，也是分類頁籤顯示的順序）
+     如需增加分類，一併加進 CATEGORIES 陣列即可。
+   ===================================================================== */
+
+const PROFILE = {
+  nameEn: "LU MENG JIN",
+  nameZh: "呂孟瑾",
+  role: "3D & Interactive Media Artist",
+  location: "Taipei, Taiwan",
+  avatar: "images/avatar.jpg", // 你的大頭照
+  links: {
+    instagram: "https://www.instagram.com/mong_.j?stkn=aXBvcGJzcTh1YXY5&utm_source=qr",
+    email: "mailto:mongjin719@gmail.com",
+    youtube: "https://youtube.com/channel/UC02e63Jm7mu_gzWSuvp7W2w?si=IyHWlvKAC5o6zwJN"
+  },
+  bio: [
+    "呂孟瑾，現就讀於 國立臺北藝術大學 新媒體藝術學系三年級，專注於互動藝術與虛擬敘事的創作實踐。作品橫跨 Unity、Unreal Engine、TouchDesigner 與 Blender，擅長將場景美術、燈光氛圍與互動裝置結合，打造具有沉浸感的視覺體驗。",
+    "創作風格常以 3D 視覺為基底，傾向以直覺且易於參與的互動設計，讓觀者能自然沉浸於作品情境之中。除數位內容創作外，創作時重視觀眾進入展場後的整體體驗，希望透過空間與互動的結合，建立更完整且具有沉浸感的觀看環境。"
+  ],
+  skills: [
+    "Unity", "Unreal Engine 5", "TouchDesigner", "Blender",
+    "Sketch Up", "Arduino", "Davinci Resolve",
+    "Lighting & Rendering", "Real-time VFX", "Environment Art",
+    "Interactive Installation"
+  ]
+};
+
+const CATEGORIES = [
+  "All",
+  "3D Game",
+  "Interactive Installation",
+  "3D Environment/Character",
+  "Audio Visual",
+  "Real Time Motion Graphic"
+];
+
+const PROJECTS = [
+  /* ---- 3D Environment/Character（共 5 件：Unreal 1、Blender 場景 3、Blender 角色建模 1）---- */
+  {
+    id: "unreal-environment",
+    title: "Unreal Engine Environment Design",
+    titleZh: "UE場景設計",
+    categories: ["3D Environment/Character"],
+    software: ["Unreal Engine 5", "Blender"],
+    year: "2026",
+    cover: "images/1.jpg",
+    featured: true,
+    gallery: [
+      "images/1.jpg",
+      "images/1.jpg",
+      "images/1.jpg"
+    ],
+    youtube:"https://www.youtube.com/watch?v=YpSOShautYQ",
+    description:
+`運用 Unreal Engine 5 的材質系統與場景素材進行整合，探索次世代即時渲染引擎在環境美術上的應用與表現。`
+  },
+  {
+    id: "blender-flesh-room",
+    title: "Flesh Room 肉室 Environment Design ",
+    titleZh: "肉室",
+    categories: ["3D Environment/Character"],
+    software: ["Blender"],
+    year: "2026",
+    cover: "images/0404.png",
+    gallery: [
+      "images/0240.png",
+      "images/environ2.png",
+      "images/environ1.png"
+    ],
+    youtube: "https://youtu.be/wHCTGJMbjuI?si=3z1DRWWhgTEKVboF",
+    description:
+`受委託人陳奕陵、陳倍妮委託，參與《同胚》創作計畫，負責其中 3D 建模與動畫畫面的製作。
+
+作品打造出一座以血肉構成的詭異房間，畫面中一人蜷縮匍匐於床鋪之間、掙扎著試圖脫身，呈現出強烈而不安的空間氛圍。`
+  },
+  {
+    id: "blender-realistic-environment",
+    title: "Realistic Environment Design",
+    titleZh: "寫實場景設計",
+    categories: ["3D Environment/Character"],
+    software: ["Blender"],
+    year: "2024-2026",
+    cover: "images/711.png",
+    youtube: "",
+    gallery: [
+      "images/CLASS.png",
+      "images/subway.png"
+    ],
+    description:
+`以寫實風格為核心的場景美術練習，著重材質細節的精確度與燈光的真實感，鑽研材質與光影的搭配，打造具說服力的寫實 3D 場景。`
+  },
+  {
+    id: "blender-stylized-environment",
+    title: "Animation Environment Design",
+    titleZh: "動畫場景設計",
+    categories: ["3D Environment/Character"],
+    software: ["Blender"],
+    year: "2024-2026",
+    cover: "images/111.png",
+    youtube: "",
+    gallery: [
+      "images/222.png",
+      "images/333.png"
+    ],
+    description:
+`以動畫風格為核心的場景美術練習，強調色彩氛圍與構圖的敘事性，透過簡化的材質語彙與燈光層次，打造具故事感的動畫場景。`
+  },
+  {
+    id: "blender-character",
+    title: "Character Study",
+    titleZh: "角色建模練習",
+    categories: ["3D Environment/Character"],
+    software: ["Blender"],
+    year: "2025-2026",
+    cover: "images/角色三視圖4.png",
+    gallery: [
+      "images/角色三視圖1.png",
+       "images/角色三視圖5.png",
+      "images/角色三視圖2.png",
+      "images/角色三視圖3.png",
+      "images/角色三視圖aaaa.png"
+    ],
+    description:
+`一件角色建模習作，從基礎體塊到細節雕刻，完整走過 sculpt、retopology 到 PBR 貼圖的角色製作流程。
+
+著重於角色輪廓的可讀性與材質細節的真實感，作為角色美術能力練習。`
+  },
+
+  /* ---- 3D Game（共 2 件：VR、3D Game）---- */
+  {
+    id: "vr-experience",
+    title: "Puffy Love Fiasco VR Game",
+    titleZh: "VR Game",
+    categories: ["3D Game"],
+    software: ["Unity", "Meta Quest SDK", "Blender"],
+    year: "2025",
+    cover: "images/a.png",
+    youtube: "https://youtu.be/TAxX0gqWYwk?si=GSXyv5NOlcZDal5B",
+    gallery: [
+      "images/VR.JPG",
+       "images/0003.png",
+      "images/4.PNG",
+       "images/g.PNG",
+      "images/0002.png",
+       "images/c.png"
+    ],
+    description:
+`本作品探討「情感關係中的失衡與徒勞」。玩家在遊戲中扮演一位努力討好戀人的角色，透過探索場景、蒐集禮物與互動機制，試圖換取河豚女友的情感回應。
+
+無論玩家如何付出與努力，河豚女友始終以憤怒、冷漠或不耐煩的態度回應，刻意打破傳統戀愛遊戲中「付出即可獲得愛」的敘事邏輯，呈現情感關係中徒勞與失落的狀態。
+
+作品以荒謬、幽默卻帶有悲劇性的方式，描繪一段無法被修復的關係，讓玩家在一次次嘗試中感受到期待落空的情緒。`
+  },
+  {
+    id: "3d-game-project",
+    title: "REFRAME 3D Game",
+    titleZh: "3D Game",
+    categories: ["3D Game"],
+    software: ["Unity", "Blender"],
+    year: "2024",
+    cover: "images/觀看.png",
+    youtube: "https://youtu.be/-D63pqreqZk?si=4zXhxQM454W61bis",
+    gallery: [
+      "images/m.png",
+      "images/n.png",
+      "images/q.png",
+      "images/h.png",
+
+    ],
+    description:
+`本作品以「感知並非客觀現實，而是被經驗與信念建構的結果」為核心出發點，探討人類如何透過習慣性思維理解世界，卻也同時被這些認知框架所限制。
+
+玩家在遊戲中進入由五個房間構成的心理空間，每個房間皆象徵一種常見的認知錯覺或社會觀念。透過主動探索與互動，玩家需使用對應的「武器」打破既有框架，使場景產生轉化，從而重新理解原本的現實。
+
+隨著遊戲推進，玩家尋找寶箱、收集卡牌，逐漸意識到真正限制世界理解方式的並非外在環境，而是自身的認知習慣。`
+  },
+
+  /* ---- Interactive Installation ---- */
+  {
+    id: "interactive-installation",
+    title: "coexist 共處 Animation Art Installation",
+    titleZh: "Animation Art Installation",
+    categories: ["Interactive Installation"],
+    software: ["Blender", "Unity", "3D Printer", "Arduino"],
+    year: "2026",
+    cover: "images/IMG_7442.jpg",
+    youtube: "https://youtu.be/px4rKE3HITg?si=N1jjZpLxXZtVSYrC",
+    gallery: [
+       "images/IMG_7453 2.jpg",
+      "images/0034.png",
+      "images/0053.png",
+       "images/0133.png",
+        "images/room三視圖.png",
+          "images/room三視圖2.png",
+    ],
+    description:
+`本作品以「數位代理」為主題，探討當 AI 擁有身體、記憶與陪伴能力後，是否可能成為人類情感寄託的存在。
+
+作品透過女孩與機器人的相處過程，描繪陪伴如何從日常逐漸累積成情感連結，並最終成為被保存的記憶。
+
+展場中放置一台機器人裝置，其外型即為動畫中 AI 機器人角色的樣貌。機器人身上設有三個按鈕，分別對應故事中的三個階段；觀眾可透過按壓按鈕，觸發儲存在機器人「資料庫」中的記憶片段，逐步觀看一段女孩與 AI 機器人之間的故事。`
+  },
+
+  /* ---- Audio Visual ---- */
+  {
+    id: "audio-visual",
+    title: "52HZ Whale",
+    titleZh: "Audio Visual",
+    categories: ["Audio Visual"],
+    software: ["TouchDesigner", "Ableton Live"],
+    year: "2026",
+    cover: "images/whale.0.jpg",
+    youtube: "https://youtu.be/srtG1Q1g66A?si=GHvVT48Ddfn8kHhI",
+    gallery: [
+      "images/whale.0.jpg",
+      "images/whale.0.jpg",
+      "images/whale.0.jpg",
+    ],
+    description:
+`靈感來自 2024 年學測國文題目〈52 赫茲鯨魚〉。一般藍鯨的發聲頻率落在 15–39 Hz，而這頭鯨魚卻以 52 Hz 的異常頻率鳴叫，從未獲得同類回應，因此被稱為「世界上最孤獨的鯨魚」。
+
+作品試圖探討現代人在群體中的孤獨感與自我投射——我們時常渴望被理解，卻無法真正被聽見；然而「與眾不同」並不代表孤單，52 Hz 鯨魚依然持續發聲、自由地穿越海洋，以自己的頻率存在於世界之中。`
+  },
+
+  /* ---- Real Time Motion Graphic ---- */
+  {
+    id: "realtime-motion-graphic",
+    title: "Bloom in Progress",
+    titleZh: "Real-Time Motion Graphic",
+    categories: ["Real Time Motion Graphic"],
+    software: ["TouchDesigner"],
+    year: "2026",
+    cover: "images/IMG_7896.JPG",
+    youtube: "https://youtu.be/LWYQPmOHuoI?si=aMvztvkzv1wUHYbz",
+    gallery: [
+      "images/fflower3.0.png",
+      "images/flowerpng.0.png",
+       "images/flower2.0.png",
+        "images/IMG_5032.MOV",
+    ],
+    description:
+`本作品以「生長（growth）」為核心，透過程式生成的粒子系統與點雲（point cloud）視覺語彙，描繪花朵在不同狀態中的轉化與循環。作品採三頻道影像形式，分別呈現「釋放」、「聚散」與「綻放」三種生命過程，構成一個持續運行且彼此關聯的動態系統。
+
+透過點粒子的流動與堆積，建立一種非固定形態的視覺語言，使花朵不再是靜態物件，而是持續變動的狀態——在生成、消散與重組的循環之中，形體不斷被建構與改寫。花朵作為一種可被轉化的結構，呈現生命在時間與系統中的流動與變化。`
+  }
+];
+
+/* ===================================================================== */
+/* =====================  以下為程式邏輯，一般不需更動  ================== */
+/* ===================================================================== */
+
+const el = (sel) => document.querySelector(sel);
+const els = (sel) => Array.from(document.querySelectorAll(sel));
+
+/* -------- 圖片載入失敗時的暫用色塊（避免路徑錯誤時畫面壞掉） -------- */
+function placeholderDataUri(label){
+  const colors = ["#632024","#6F4D38","#25344F","#617891"];
+  const c1 = colors[Math.floor(Math.random()*colors.length)];
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${c1}"/>
+        <stop offset="100%" stop-color="#161F2F"/>
+      </linearGradient>
+    </defs>
+    <rect width="800" height="500" fill="url(#g)"/>
+    <text x="50%" y="50%" fill="#D5B893" font-family="Georgia, serif" font-size="28"
+      text-anchor="middle" dominant-baseline="middle" opacity="0.85">${label}</text>
+  </svg>`;
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+}
+function imgTag(src, alt, cls){
+  const fallback = placeholderDataUri(alt || "LU MENG JIN");
+  return `<img src="${src}" alt="${alt||''}" class="${cls||''}" loading="lazy"
+    onerror="this.onerror=null;this.src='${fallback}'">`;
+}
+
+/* -------- cover / gallery 路徑如果是影片檔（.mp4 .mov .webm .m4v），
+   改用 <video> 播放，而不是塞進 <img>（<img> 沒辦法播放影片檔）。
+   建議優先用 .mp4，相容性比 .mov 好；.mov 在部分瀏覽器可能還是打不開。 -------- */
+const VIDEO_EXT_RE = /\.(mp4|webm|mov|m4v)(\?.*)?$/i;
+function mediaTag(src, alt, cls){
+  if(VIDEO_EXT_RE.test(src)){
+    return `<video src="${src}" class="${cls||''}" controls muted loop playsinline preload="metadata"></video>`;
+  }
+  return imgTag(src, alt, cls);
+}
+
+/* -------------------------- 路由 / Router -------------------------- */
+function parseHash(){
+  const hash = location.hash.replace(/^#\/?/, "");
+  const parts = hash.split("/").filter(Boolean);
+  if(parts[0] === "project" && parts[1]) return { view:"project", id: parts[1] };
+  if(parts[0] === "resume") return { view:"resume" };
+  if(parts[0] === "portfolio") return { view:"portfolio", filter: parts[1] ? decodeURIComponent(parts[1]) : "All" };
+  return { view:"portfolio", filter:"All" };
+}
+
+function setActiveNav(view){
+  els("[data-view-link]").forEach(a=>{
+    a.classList.toggle("active", a.dataset.viewLink === view);
+  });
+}
+
+function showView(name){
+  ["portfolio","project","resume"].forEach(v=>{
+    el("#view-"+v).hidden = (v!==name);
+  });
+}
+
+function router(){
+  const r = parseHash();
+  setActiveNav(r.view === "project" ? "portfolio" : r.view);
+  closeMobileMenu();
+
+  if(r.view === "portfolio"){
+    showView("portfolio");
+    renderFilterTabs(r.filter);
+    renderGrid(r.filter);
+  } else if(r.view === "project"){
+    showView("project");
+    renderProjectDetail(r.id);
+  } else if(r.view === "resume"){
+    showView("resume");
+    renderResume();
+  }
+  window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+}
+
+/* -------------------------- Portfolio 渲染 -------------------------- */
+function renderFilterTabs(active){
+  const wrap = el("#filterTabs");
+  wrap.innerHTML = CATEGORIES.map(cat=>`
+    <button data-cat="${cat}" class="${cat===active?'active':''}">${cat}</button>
+  `).join("");
+  els("#filterTabs button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const cat = btn.dataset.cat;
+      location.hash = cat==="All" ? "#/portfolio" : `#/portfolio/${encodeURIComponent(cat)}`;
+    });
+  });
+}
+
+function renderGrid(filter){
+  const grid = el("#projectGrid");
+  const list = filter==="All" ? PROJECTS : PROJECTS.filter(p=>p.categories.includes(filter));
+  grid.classList.toggle("cols-2", filter==="All"); // All 分類：兩件作品一排；其他分類維持整排滿版寬
+  grid.innerHTML = list.map(p=>`
+    <a class="project-card" href="#/project/${p.id}" tabindex="0">
+      ${mediaTag(p.cover, p.title)}
+      <div class="overlay">
+        <div class="p-title">${p.title}</div>
+        <div class="p-meta">
+          <span>${p.software.join(" · ")}</span>
+        </div>
+        <div class="p-meta" style="margin-top:2px;">
+          <span>${p.categories.join(" / ")}</span><span>—</span><span>${p.year}</span>
+        </div>
+      </div>
+    </a>
+  `).join("") || `<p style="color:var(--text-muted);">目前這個分類還沒有作品。</p>`;
+}
+
+/* -------------------------- Project Detail 渲染 -------------------------- */
+function renderProjectDetail(id){
+  const idx = PROJECTS.findIndex(p=>p.id===id);
+  const p = PROJECTS[idx];
+  const wrap = el("#projectDetail");
+  if(!p){
+    wrap.innerHTML = `<p style="padding:80px 0;color:var(--text-muted);">找不到這個作品。</p>`;
+    return;
+  }
+  const next = PROJECTS[(idx+1) % PROJECTS.length];
+
+  wrap.innerHTML = `
+    <a href="#/portfolio" class="pd-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to portfolio
+    </a>
+
+    <div class="pd-top">
+      <div class="pd-hero">${mediaTag(p.cover, p.title)}</div>
+
+      <div class="pd-info">
+        <div class="pd-eyebrow">${p.categories.join(" · ")}</div>
+        <h1 class="pd-title">${p.title}</h1>
+        <div class="pd-desc">${p.description}</div>
+
+        <div class="pd-meta">
+          <div class="meta-row">
+            <span class="meta-label">Year</span>
+            <div class="year">${p.year}</div>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Software</span>
+            <div class="tag-row">${p.software.map(s=>`<span class="tag soft">${s}</span>`).join("")}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${p.gallery && p.gallery.length ? `
+      <div class="pd-gallery">
+        ${p.gallery.map((g,i)=>`<div class="${i===0 && p.gallery.length>2 ? 'full':''}">${mediaTag(g, p.title+" gallery "+(i+1))}</div>`).join("")}
+      </div>
+    ` : ""}
+
+    ${p.youtube ? `
+      <div class="pd-video">
+        <div class="video-frame">
+          <iframe src="${toEmbed(p.youtube)}" title="${p.title} video" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      </div>
+    ` : ""}
+
+    <div class="pd-next">
+      <div class="next-label">Next project</div>
+      <a class="next-card" href="#/project/${next.id}">
+        ${mediaTag(next.cover, next.title)}
+        <div class="nc-inner">
+          <div class="nc-title">${next.title}</div>
+        </div>
+      </a>
+    </div>
+  `;
+}
+
+function toEmbed(url){
+  // 支援貼一般 YouTube 連結，自動轉成 embed 格式
+  try{
+    const u = new URL(url);
+    let id = "";
+    if(u.hostname.includes("youtu.be")) id = u.pathname.slice(1);
+    else if(u.pathname.includes("/embed/")) return url;
+    else id = u.searchParams.get("v");
+    return id ? `https://www.youtube.com/embed/${id}` : url;
+  }catch(e){ return url; }
+}
+
+/* -------------------------- Resume 渲染 -------------------------- */
+function renderResume(){
+  const wrap = el("#resumeContent");
+  wrap.innerHTML = `
+    <div class="resume-top">
+      <div class="avatar">${imgTag(PROFILE.avatar, PROFILE.nameEn)}</div>
+      <div class="resume-intro">
+        <h1>${PROFILE.nameEn}</h1>
+        <div class="r-role">${PROFILE.role}</div>
+        <div class="r-loc">${PROFILE.location}</div>
+        <div class="social-row">
+          <a href="${PROFILE.links.instagram}" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="${PROFILE.links.email}" aria-label="Email">
+            <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          </a>
+          <a href="${PROFILE.links.youtube}" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M11 10l4 2-4 2z" fill="currentColor" stroke="none"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="resume-section">
+      <h2>About</h2>
+      ${PROFILE.bio.map(b=>`<p>${b}</p>`).join("")}
+    </div>
+
+    <div class="resume-section">
+      <h2>Skills & Software</h2>
+      <div class="skills-grid">
+        ${PROFILE.skills.map(s=>`<span class="skill-pill">${s}</span>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+/* -------------------------- 導覽 / 選單 / 回頂端 -------------------------- */
+function closeMobileMenu(){
+  el("#mobileMenu").classList.remove("open");
+  el("#hamburgerBtn").classList.remove("open");
+  el("#hamburgerBtn").setAttribute("aria-expanded","false");
+}
+
+el("#hamburgerBtn").addEventListener("click", ()=>{
+  const open = el("#mobileMenu").classList.toggle("open");
+  el("#hamburgerBtn").classList.toggle("open", open);
+  el("#hamburgerBtn").setAttribute("aria-expanded", String(open));
+});
+
+els("#mobileMenu a[data-view-link]").forEach(a=>{
+  a.addEventListener("click", closeMobileMenu);
+});
+
+el("#floatTop").addEventListener("click", ()=>{
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+/* -------- 動態計算 header 高度，避免內容被固定 header 蓋住 -------- */
+function syncHeaderHeight(){
+  const h = el(".site-header").offsetHeight;
+  document.documentElement.style.setProperty("--header-h", h + "px");
+}
+window.addEventListener("resize", syncHeaderHeight);
+window.addEventListener("DOMContentLoaded", syncHeaderHeight);
+syncHeaderHeight();
+
+/* -------- 捲動時隱藏頂部 header，只有回到最上方（含按 Back to top）才會再出現 -------- */
+const HEADER_SHOW_THRESHOLD = 10; // px
+function updateHeaderVisibility(){
+  const header = el(".site-header");
+  const y = window.scrollY;
+  el("#floatTop").classList.toggle("show", y > 480);
+  if(y > HEADER_SHOW_THRESHOLD){
+    header.classList.add("header-hidden");
+  }else{
+    header.classList.remove("header-hidden");
+  }
+}
+window.addEventListener("scroll", updateHeaderVisibility, { passive:true });
+updateHeaderVisibility();
+
+/* 頁尾「Back to top」文字連結（每頁最下面都有） */
+el("#backToTopLink").addEventListener("click", (e)=>{
+  e.preventDefault();
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+/* 頁尾與品牌區塊帶入 profile 資料 */
+el("#brandRole").textContent = PROFILE.role;
+el("#footerName").textContent = `© ${PROFILE.nameEn} — All rights reserved`;
+
+window.addEventListener("hashchange", router);
+window.addEventListener("DOMContentLoaded", router);
+router();
+</script>
+</body>
+</html>
